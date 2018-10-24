@@ -1,0 +1,101 @@
+﻿@model ApII_Parcia2._0.Models.Prestamos
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Prestamos</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Clientes.Nombre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Clientes.Nombre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Capital)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Capital)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Interes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Interes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Plazo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Plazo)
+        </dd>
+
+    </dl>
+</div>
+<h1>
+    Tabla Amortizacion  
+</h1>
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Couta</th>
+            <th>Interes Mensual</th>
+            <th>Amortisacion Principal</th>
+            <th>Amorisacion Total</th>
+            <th> Capital Pendiente</th>
+        </tr>
+    </thead>
+    @{
+        double capital = Model.Capital;
+        double Interes = Convert.ToDouble(Model.Interes) / 1200;
+        double Plazo = Convert.ToDouble(Model.Plazo);
+
+        //Formula para generar Desglose de couta
+
+        double Couta = capital * (Interes / (double)(1 - Math.Pow(1 + (double)Interes, -Plazo)));
+
+        double InteresMensual = 0;
+        double Amortizacion = 0;
+        double Amortizacion_Total = 0;
+        int i = 1;
+
+        for (i = 1; i <= Plazo; i++)
+        {
+            InteresMensual = Math.Round((Interes * capital), 2);
+            capital = Math.Round(capital - Convert.ToDouble(Couta) + InteresMensual, 2);
+
+            Amortizacion_Total += Math.Round(capital - InteresMensual, 2);
+            Amortizacion = Convert.ToDouble(Couta) - InteresMensual;
+
+            <tbody>
+                <tr>
+                    <td>@i</td>
+                    <td>@Math.Round(Couta, MidpointRounding.AwayFromZero)</td>
+                    <td>@Math.Round(InteresMensual, MidpointRounding.AwayFromZero)</td>
+                    <td>@Math.Round(Amortizacion, MidpointRounding.AwayFromZero)</td>
+                    <td>@Math.Round(Amortizacion_Total, MidpointRounding.AwayFromZero)</td>
+                    <td>@Math.Round(capital, MidpointRounding.AwayFromZero)</td>
+                </tr>
+            </tbody>
+        }
+
+
+    }
+</table>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PrestamosId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
